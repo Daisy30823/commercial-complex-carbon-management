@@ -1,0 +1,14 @@
+use commercial_complex_carbon_db;
+select count(*) as table_count from information_schema.tables where table_schema=database() and table_type='BASE TABLE';
+select table_name,count(*) as column_count from information_schema.columns where table_schema=database() group by table_name having count(*)>=15 order by column_count desc;
+select t.table_name,case when k.column_name is null then 0 else 1 end as has_primary_key from information_schema.tables t left join (select distinct table_name,column_name from information_schema.key_column_usage where table_schema=database() and constraint_name='primary') k on k.table_name=t.table_name where t.table_schema=database() and t.table_type='BASE TABLE' order by t.table_name;
+select count(*) as foreign_key_count from information_schema.table_constraints where table_schema=database() and constraint_type='FOREIGN KEY';
+select count(*) as view_count from information_schema.views where table_schema=database();
+select distinct table_name,column_name from information_schema.columns where table_schema=database() and data_type='json';
+select k.table_name,k.column_name,k.referenced_table_name from information_schema.key_column_usage k where k.table_schema=database() and k.referenced_table_name=k.table_name;
+select routine_type,count(*) as object_count from information_schema.routines where routine_schema=database() group by routine_type;
+select trigger_name,event_object_table from information_schema.triggers where trigger_schema=database();
+select table_name,table_rows from information_schema.tables where table_schema=database() and table_type='BASE TABLE' order by table_rows desc;
+select 'energy_consumption_record' as table_name,count(*) as record_count from energy_consumption_record;
+select 'carbon_accounting_record' as table_name,count(*) as record_count from carbon_accounting_record;
+select routine_name from information_schema.routines where routine_schema=database() and routine_name in ('sp_save_commercial_complex','sp_delete_commercial_complex','sp_save_building','sp_delete_building','sp_save_functional_area','sp_delete_functional_area','sp_save_merchant','sp_delete_merchant','sp_save_meter_node','sp_delete_meter_node','sp_save_meter_device','sp_delete_meter_device','sp_query_monthly_area_energy_carbon','sp_query_top_merchants_carbon','sp_query_over_budget_areas','sp_query_open_alerts','sp_query_project_effect','sp_query_energy_mix','sp_query_meter_node_tree');
